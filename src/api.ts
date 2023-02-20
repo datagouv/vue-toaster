@@ -1,6 +1,6 @@
-import Toaster from './Toaster.vue'
-import eventBus from './helpers/event-bus.js'
-import mount from './helpers/mount-component'
+import Toaster from '../Toaster.vue';
+import mount from '../helpers/mount-component';
+import emitter from '../helpers/mitt';
 
 const Api = (globalOptions = {}) => {
   return {
@@ -8,11 +8,11 @@ const Api = (globalOptions = {}) => {
       let localOptions = { message, ...options }
       const c = mount(Toaster, {
         props: { ...globalOptions, ...localOptions }
-      })
-      return c
+      });
+      return c;
     },
     clear() {
-      eventBus.$emit('toast-clear')
+      emitter.emit('toast-clear')
     },
     success(message, options = {}) {
       options.type = 'success'

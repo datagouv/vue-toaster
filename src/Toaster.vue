@@ -1,9 +1,6 @@
 <template>
-  <transition
-    :enter-active-class="transition.enter"
-    :leave-active-class="transition.leave"
-  >
-    <div
+  <transition :enter-active-class="transition.enter" :leave-active-class="transition.leave" ref="el">
+    <div 
       v-show="isActive"
       :class="['c-toast', `c-toast--${type}`, `c-toast--${position}`]"
       @mouseover="toggleTimer(true)"
@@ -11,193 +8,200 @@
       @click="click"
       role="alert"
       v-html="message"
-    />
+    ></div>
   </transition>
 </template>
 
-<script>
-import { removeElement } from './helpers/remove-element'
-import Timer from './helpers/timer'
-import Positions, { definePosition } from './defaults/positions'
-import eventBus from './helpers/event-bus'
-
-export default {
-  name: 'toast',
+<script setup lang="ts">
+import { ref, computed, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
+import Positions, { definePosition } from './defaults/positions';
+import { removeElement } from './helpers/remove-element';
+import Timer from './helpers/timer';
+import emitter from './helpers/event-bus';
+const props = defineProps({
+  message: {
+    type: String,
+    required: true,
+  },
+  type: {
+    type: String,
+    default: 'default',
+  },
+  position: {
+    type: String,
+    default: Positions.BOTTOM_RIGHT,
+    validator(value: string) {
+      return Object.values(Positions).includes(value);
+    },
+  },
+  maxToasts: {
+    type: [Number, Boolean],
+    default: false,
+  },
+  duration: {
+    type: [Number, Boolean],
+    default: 4000,
+  },
+  dismissible: {
+    type: Boolean,
+    default: true,
+  },
+  queue: {
+    type: Boolean,
+    default: false,
+  },
   props: {
-    message: {
-      type: String,
-      required: true
-    },
-    type: {
-      type: String,
-      default: 'default'
-    },
-    position: {
-      type: String,
-      default: Positions.BOTTOM_RIGHT,
-      validator(value) {
-        return Object.values(Positions).includes(value)
-      }
-    },
-    maxToasts: {
-      type: [Number, Boolean],
-      default: false
-    },
-    duration: {
-      type: [Number, Boolean],
-      default: 4000
-    },
-    dismissible: {
-      type: Boolean,
-      default: true
-    },
-    queue: {
-      type: Boolean,
-      default: false
-    },
-    pauseOnHover: {
-      type: Boolean,
-      default: true
-    },
-    useDefaultCss: {
-      type: Boolean,
-      default: true
-    },
-    onClose: {
-      type: Function,
-      default: () => {}
-    },
-    onClick: {
-      type: Function,
-      default: () => {}
-    }
+    type: Boolean,
+    default: true,
   },
-  data() {
-    return {
-      isActive: false,
-      parentTop: null,
-      parentBottom: null,
-      isHovered: false,
-      timer: null
-    }
+  useDefaultCss: {
+    type: Boolean,
+    default: true,
   },
-  beforeMount() {
-    this.createParents()
-    this.setDefaultCss()
-    this.setupContainer()
+  onClose: {
+    type: Function,
+    default: () => { },
   },
-  mounted() {
-    this.showNotice()
-    eventBus.$on('toast-clear', this.close)
-  },
-  methods: {
-    createParents() {
-      this.parentTop = document.querySelector('.c-toast-container--top')
-      this.parentBottom = document.querySelector('.c-toast-container--bottom')
+  onClick: {
+    type: Function,
+    default: () => { },
+  }
+})
+let parentTop : Element | null = null;
+let parentBottom : Element | null = null;
+let timer : Timer | null = null;
+let queueTimer : number | undefined;
+const el = ref(null);
+const isActive = ref(false);
+const isHovered = ref(false);
 
-      if (this.parentTop && this.parentBottom) return
+onBeforeMount(() => {
+  createParents();
+  setDefaultCss();
+  setupContainer();
+});
 
-      if (!this.parentTop) {
-        this.parentTop = document.createElement('div')
-        this.parentTop.className = 'c-toast-container c-toast-container--top'
-      }
+onMounted(() => {
+  showNotice();
+  emitter.on('toast-clear', close);
+});
 
-      if (!this.parentBottom) {
-        this.parentBottom = document.createElement('div')
-        this.parentBottom.className =
-          'c-toast-container c-toast-container--bottom'
-      }
-    },
-    setDefaultCss() {
-      const type = this.useDefaultCss ? 'add' : 'remove'
-      this.parentTop.classList[type]('v--default-css')
-      this.parentBottom.classList[type]('v--default-css')
-    },
-    setupContainer() {
-      const container = document.body
-      container.appendChild(this.parentTop)
-      container.appendChild(this.parentBottom)
-    },
-    shouldQueue() {
-      if (!this.queue && this.maxToasts === false) {
-        return false
-      }
+function createParents() {
+  parentTop = document.querySelector('.c-toast-container--top');
+  parentBottom = document.querySelector('.c-toast-container--bottom');
+  if (parentTop && parentBottom) return;
 
-      if (this.maxToasts !== false) {
-        return (
-          this.maxToasts <=
-          this.parentTop.childElementCount + this.parentBottom.childElementCount
-        )
-      }
+  if (!parentTop) {
+    parentTop = document.createElement('div');
+    parentTop.className = 'c-toast-container c-toast-container--top';
+  }
 
-      return (
-        this.parentTop.childElementCount > 0 ||
-        this.parentBottom.childElementCount > 0
-      )
-    },
-    showNotice() {
-      if (this.shouldQueue()) {
-        this.queueTimer = setTimeout(this.showNotice, 250)
-        return
-      }
-
-      this.correctParent.insertAdjacentElement('afterbegin', this.$el)
-      this.isActive = true
-
-      this.timer =
-        this.duration !== false ? new Timer(this.close, this.duration) : null
-    },
-    click() {
-      this.onClick.apply(null, arguments)
-
-      if (this.dismissible) {
-        this.close()
-      }
-    },
-    toggleTimer(newVal) {
-      if (this.timer && this.pauseOnHover) {
-        newVal ? this.timer.pause() : this.timer.resume()
-      }
-    },
-    stopTimer() {
-      this.timer && this.timer.stop()
-      clearTimeout(this.queueTimer)
-    },
-    close() {
-      this.stopTimer()
-      this.isActive = false
-      setTimeout(() => {
-        this.onClose.apply(null, arguments)
-        removeElement(this.$el)
-      }, 150)
-    }
-  },
-  computed: {
-    correctParent() {
-      return definePosition(this.position, this.parentTop, this.parentBottom)
-    },
-    transition() {
-      return definePosition(
-        this.position,
-        {
-          enter: 'fadeInDown',
-          leave: 'fadeOut'
-        },
-        {
-          enter: 'fadeInUp',
-          leave: 'fadeOut'
-        }
-      )
-    }
-  },
-  beforeUnmount() {
-    eventBus.$off('toast-clear', this.close)
+  if (!parentBottom) {
+    parentBottom = document.createElement('div');
+    parentBottom.className = 'c-toast-container c-toast-container--bottom';
   }
 }
+
+function setDefaultCss() {
+  const type = props.useDefaultCss ? 'add' : 'remove';
+  if(parentTop) {
+    parentTop.classList[type]('v--default-css');
+  }
+  if(parentBottom) {
+    parentBottom.classList[type]('v--default-css');
+  }
+}
+
+function setupContainer() {
+  const container = document.body;
+  if(parentTop) {
+    container.appendChild(parentTop);
+  }
+  if(parentBottom) {
+    container.appendChild(parentBottom);
+  }
+}
+
+function shouldQueue() {
+  if (!props.queue && props.maxToasts === false) {
+    return false;
+  }
+  let parentTopChildElementCount = 0;
+  if(parentTop) {
+    parentTopChildElementCount = parentTop.childElementCount;
+  }
+  let parentBottomChildElementCount = 0;
+  if(parentBottom) {
+    parentBottomChildElementCount = parentBottom.childElementCount;
+  }
+  if (props.maxToasts !== false) {
+    return (
+      props.maxToasts <=
+      parentTopChildElementCount + parentBottomChildElementCount
+    );
+  }
+  return (
+    parentTopChildElementCount > 0 ||
+    parentBottomChildElementCount > 0
+  );
+}
+
+function showNotice() {
+  if (shouldQueue()) {
+    queueTimer = window.setTimeout(showNotice, 250);
+    return;
+  }
+  correctParent().insertAdjacentElement('afterbegin', el.value);
+  isActive.value = true;
+  timer = props.duration !== false ? new Timer(close, props.duration) : null;
+}
+
+function click() {
+  props.onClick.apply(null, arguments);
+  if (props.dismissible) {
+    close();
+  }
+}
+
+function toggleTimer(newVal: boolean) {
+  if (timer) {
+    newVal ? timer.pause() : timer.resume();
+  }
+}
+
+function stopTimer() {
+  timer && timer.stop();
+  clearTimeout(queueTimer);
+}
+
+function close() {
+  stopTimer();
+  isActive.value = false;
+  setTimeout(() => {
+    props.onClose.apply(null, arguments);
+    removeElement(el.value);
+  }, 150);
+}
+
+function correctParent() {
+  return definePosition(props.position, parentTop, parentBottom);
+}
+
+const transition = computed(() => {
+  return definePosition(
+    props.position,
+    {
+      enter: 'fadeInDown',
+      leave: 'fadeOut',
+    },
+    {
+      enter: 'fadeInUp',
+      leave: 'fadeOut',
+    }
+  );
+});
+
+onBeforeUnmount(() => {
+  emitter.off('toast-clear', close);
+});
 </script>
-<style lang="stylus">
-@import './themes/default/index.styl'
-.v--default-css
-  @import './themes/default/colors.styl'
-  @import './themes/default/toast.styl'
-</style>

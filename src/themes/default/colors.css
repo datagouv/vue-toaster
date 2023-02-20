@@ -1,0 +1,19 @@
+.v--default-css .c-toast--success {
+  background-color: var(--success);
+}
+
+.v--default-css .c-toast--info {
+  background-color: var(--info);
+}
+
+.v--default-css .c-toast--warning {
+  background-color: var(--warning);
+}
+
+.v--default-css .c-toast--error {
+  background-color: var(--error);
+}
+
+.v--default-css .c-toast--default {
+  background-color: var(--default);
+}

@@ -1,0 +1,16 @@
+{
+    "extends": "@vue/tsconfig/tsconfig.web.json",
+    "include": ["src"],
+    "compilerOptions": {
+      "target": "es2018",
+      "lib": ["dom", "esnext"],
+      "declaration": true,
+      "declarationMap": true,
+      "declarationDir": "types",
+      "moduleResolution": "node",
+      "sourceMap": true,
+      "skipLibCheck": true,
+      "types": ["vitest/globals"]
+    }
+  }
+  
