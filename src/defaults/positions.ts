@@ -9,7 +9,12 @@ const POSITIONS = {
 
 export default Object.freeze(POSITIONS);
 
-export function definePosition(position: string, top: string, bottom: string) {
+interface Animated {
+  enter: string,
+  leave: string
+}
+
+export function definePosition(position: string, top: Animated, bottom: Animated): Animated | null {
   let result = null;
   switch (position) {
     case POSITIONS.TOP:
