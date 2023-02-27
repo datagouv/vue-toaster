@@ -1,36 +1,46 @@
-import Toaster from '../Toaster.vue';
-import mount from '../helpers/mount-component';
-import emitter from '../helpers/mitt';
+import Toaster from './Toaster.vue';
+import mount from './helpers/mount-component';
+import emitter from './helpers/event-bus';
+import type { Position } from './defaults/positions';
 
-const Api = (globalOptions = {}) => {
+type type = "success" | "info" | "warning" | "error";
+
+type options = {
+  message?: string,
+  type?: type,
+  position?: Position,
+  duration?: number | false,
+}
+
+function api(globalOptions : options = {}) {
   return {
-    show(message, options = {}) {
-      let localOptions = { message, ...options }
+    show(message: string, options : options = {}) {
+      let localOptions = { message, ...options };
       const c = mount(Toaster, {
-        props: { ...globalOptions, ...localOptions }
+        props: { ...globalOptions, ...localOptions },
       });
       return c;
     },
     clear() {
-      emitter.emit('toast-clear')
+      emitter.emit('toast-clear');
     },
-    success(message, options = {}) {
-      options.type = 'success'
-      return this.show(message, options)
+    success(message: string, options : options = {}) {
+      options.type = 'success';
+      return this.show(message, options);
     },
-    error(message, options = {}) {
-      options.type = 'error'
-      return this.show(message, options)
+    error(message: string, options : options = {}) {
+      options.type = 'error';
+      return this.show(message, options);
     },
-    info(message, options = {}) {
-      options.type = 'info'
-      return this.show(message, options)
+    info(message: string, options : options = {}) {
+      options.type = 'info';
+      return this.show(message, options);
     },
-    warning(message, options = {}) {
-      options.type = 'warning'
-      return this.show(message, options)
+    warning(message: string, options : options = {}) {
+      options.type = 'warning';
+      return this.show(message, options);
     }
   }
 }
 
-export default Api
+export default api;

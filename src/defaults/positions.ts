@@ -1,4 +1,6 @@
-const POSITIONS = {
+export type Position = "top" | "bottom" | "top-right" | "bottom-right" | "top-left" | "bottom-left";
+
+const POSITIONS : Record<string, Position> = {
   TOP_RIGHT: 'top-right',
   TOP: 'top',
   TOP_LEFT: 'top-left',
@@ -9,13 +11,8 @@ const POSITIONS = {
 
 export default Object.freeze(POSITIONS);
 
-interface Animated {
-  enter: string,
-  leave: string
-}
-
-export function definePosition(position: string, top: Animated, bottom: Animated): Animated | null {
-  let result = null;
+export function definePosition<T>(position: string, top: T, bottom: T): T {
+  let result = top;
   switch (position) {
     case POSITIONS.TOP:
     case POSITIONS.TOP_RIGHT:

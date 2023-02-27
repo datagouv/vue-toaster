@@ -15,65 +15,43 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import Positions, { definePosition } from './defaults/positions';
+import type { Position } from './defaults/positions';
 import { removeElement } from './helpers/remove-element';
 import Timer from './helpers/timer';
 import emitter from './helpers/event-bus';
-const props = defineProps({
-  message: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    default: 'default',
-  },
-  position: {
-    type: String,
-    default: Positions.BOTTOM_RIGHT,
-    validator(value: string) {
-      return Object.values(Positions).includes(value);
-    },
-  },
-  maxToasts: {
-    type: [Number, Boolean],
-    default: false,
-  },
-  duration: {
-    type: [Number, Boolean],
-    default: 4000,
-  },
-  dismissible: {
-    type: Boolean,
-    default: true,
-  },
-  queue: {
-    type: Boolean,
-    default: false,
-  },
-  props: {
-    type: Boolean,
-    default: true,
-  },
-  useDefaultCss: {
-    type: Boolean,
-    default: true,
-  },
-  onClose: {
-    type: Function,
-    default: () => { },
-  },
-  onClick: {
-    type: Function,
-    default: () => { },
-  }
-})
+
+export interface Props {
+  message: string,
+  type?: string,
+  position?: Position,
+  maxToasts?: number | boolean,
+  duration?: number | false,
+  dismissible? : boolean,
+  queue?: boolean,
+  props?: boolean,
+  useDefaultCss?: boolean,
+  onClose?: Function,
+  onClick?: Function
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  type: 'default',
+  position: Positions.BOTTOM_RIGHT,
+  maxToasts: false,
+  duration: 4000,
+  dismissible: true,
+  queue: false,
+  props: true,
+  useDefaultCss: true,
+  onClose: () => { },
+  onClick: () => { },
+});
 let parentTop : Element | null = null;
 let parentBottom : Element | null = null;
 let timer : Timer | null = null;
 let queueTimer : number | undefined;
-const el = ref(null);
+const el = ref<HTMLElement | null>(null);
 const isActive = ref(false);
-const isHovered = ref(false);
 
 onBeforeMount(() => {
   createParents();
@@ -150,10 +128,13 @@ function showNotice() {
   if (shouldQueue()) {
     queueTimer = window.setTimeout(showNotice, 250);
     return;
+  } 
+  const parent = correctParent();
+  if (parent && el.value) {
+    parent.insertAdjacentElement('afterbegin', el.value);
+    isActive.value = true;
+    timer = props.duration !== false ? new Timer(close, props.duration) : null;
   }
-  correctParent().insertAdjacentElement('afterbegin', el.value);
-  isActive.value = true;
-  timer = props.duration !== false ? new Timer(close, props.duration) : null;
 }
 
 function click() {
@@ -179,20 +160,25 @@ function close() {
   isActive.value = false;
   setTimeout(() => {
     props.onClose.apply(null, arguments);
-    removeElement(el.value);
+    if(el.value) {
+      removeElement(el.value);
+    }
   }, 150);
 }
 
 function correctParent() {
+  if(!parentTop || !parentBottom) {
+    return null;
+  }
   return definePosition(props.position, parentTop, parentBottom);
 }
 
-const transition = computed(() => {
+const transition = computed<{enter: string, leave: string}>(() => {
   return definePosition(
     props.position,
     {
-      enter: 'fadeInDown',
-      leave: 'fadeOut',
+    enter: 'fadeInDown',
+    leave: 'fadeOut',
     },
     {
       enter: 'fadeInUp',

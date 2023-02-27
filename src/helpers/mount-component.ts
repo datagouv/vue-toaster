@@ -2,10 +2,10 @@ import { render, h } from 'vue';
 import type { App, Component, VNode } from "vue";
 
 const createElement = () =>
-  typeof document !== 'undefined' && document.createElement('div');
+  typeof document !== 'undefined' ? document.createElement('div') : null;
 
-const mount = (component: Component, { props, children, element, app } :{props?: object, children?: undefined, element?: Element, app?: App} = {}) => {
-  let el : Element | false | null = element ? element : createElement();
+function mount(component: Component, { props, children, element, app } : { props?: object, children?: undefined, element?: Element, app?: App } = {}) {
+  let el : Element | null = element ? element : createElement();
 
   let vNode : VNode | null = h(component, props, children);
   if (app && app._context) {
@@ -25,6 +25,6 @@ const mount = (component: Component, { props, children, element, app } :{props?:
   };
 
   return { vNode, destroy, el };
-};
+}
 
 export default mount;

@@ -1,8 +1,10 @@
-const removeElement = (el) => {
+const removeElement = (el: Element) => {
   if (typeof el.remove !== 'undefined') {
-    el.remove()
+    el.remove();
   } else {
-    el.parentNode.removeChild(el)
+    if(el.parentNode) {
+      el.parentNode.removeChild(el);
+    }
   }
 }
 
