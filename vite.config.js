@@ -7,6 +7,11 @@ export default defineConfig({
   plugins: [
     vue(),
   ],
+  build: {
+    rollupOptions: {
+      input: 'src/index.ts',
+    },
+  },
   test: {
     environment: "jsdom",
     clearMocks: true,

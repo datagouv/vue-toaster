@@ -1,16 +1,13 @@
 import { render, h } from 'vue';
-import type { App, Component, VNode } from "vue";
+import type { Component, VNode } from "vue";
 
 const createElement = () =>
   typeof document !== 'undefined' ? document.createElement('div') : null;
 
-function mount(component: Component, { props, children, element, app } : { props?: object, children?: undefined, element?: Element, app?: App } = {}) {
-  let el : Element | null = element ? element : createElement();
+function mount(component: Component, { props} : { props?: object } = {}) {
+  let el : Element | null = createElement();
 
-  let vNode : VNode | null = h(component, props, children);
-  if (app && app._context) {
-    vNode.appContext = app._context;
-  }
+  let vNode : VNode | null = h(component, props);
 
   if(el) {
     render(vNode, el);

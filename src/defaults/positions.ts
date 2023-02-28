@@ -1,6 +1,6 @@
 export type Position = "top" | "bottom" | "top-right" | "bottom-right" | "top-left" | "bottom-left";
 
-const POSITIONS : Record<string, Position> = {
+const POSITIONS : Readonly<Record<string, Position>> = {
   TOP_RIGHT: 'top-right',
   TOP: 'top',
   TOP_LEFT: 'top-left',
@@ -9,9 +9,9 @@ const POSITIONS : Record<string, Position> = {
   BOTTOM_LEFT: 'bottom-left',
 };
 
-export default Object.freeze(POSITIONS);
+export default POSITIONS;
 
-export function definePosition<T>(position: string, top: T, bottom: T): T {
+export function definePosition<T>(position: Position, top: T, bottom: T): T {
   let result = top;
   switch (position) {
     case POSITIONS.TOP:

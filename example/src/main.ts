@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 
-import Toaster from '@conciergerie.dev/vue-toaster';
+import Toaster from '../../src';
 
 createApp(App).use(Toaster).mount('#app');
