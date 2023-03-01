@@ -1,16 +1,15 @@
 <template>
   <button class="c-button">
-    <div class="c-button__hover" />
-    <div class="c-button__content">
-      <slot />
-    </div>
+    <span class="c-button__hover"></span>
+    <span class="c-button__content">
+      <slot></slot>
+    </span>
   </button>
 </template>
-<script>
-export default {
-  name: 'Button'
-}
+
+<script setup lang="ts">
 </script>
+
 <style>
 .c-button {
   padding: 12px 16px;
@@ -57,8 +56,8 @@ export default {
 }
 
 .c-button--sprawled {
-  min-width: 160px;
-  padding: 12px 48px;
+  min-width: 10rem;
+  padding: 0.75rem 3rem;
 }
 .c-button__hover {
   position: absolute;

@@ -1,6 +1,7 @@
 MIT License
 
-Copyright (c) 2023 KEMPF LE STANC DEVELOPPEMENT !
+Copyright (c) 2020 MeForma
+Copyright (c) 2023 KEMPF LE STANC DEVELOPPEMENT
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -20,7 +20,6 @@ You can install Toaster so it's usable globally:
 
 ```js
 // In you main.js
-// ... considering that your app creation is here
 import Toaster from "@meforma/vue-toaster";
 
 createApp(App).use(Toaster).mount("#app");
@@ -121,7 +120,9 @@ this.$toast.success("Order placed.", {
 Clone the project and run:
 
 ```
-cd example; yarn install; yarn serve
+cd vue-toaster-example
+npm install
+npm run dev
 ```
 
 ## License

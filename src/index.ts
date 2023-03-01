@@ -1,7 +1,9 @@
 import Toaster from './Toaster.vue';
 import createToaster from './api.js';
-import Positions from './defaults/positions.js';
+import Positions from './defaults/positions';
 import type { App } from 'vue';
+import type { Position } from './defaults/positions';
+import type { Options, Type } from './api';
 
 import './themes/default/index.css';
 import './themes/default/colors.css';
@@ -16,3 +18,4 @@ export default {
 };
 
 export { Toaster, Positions, createToaster };
+export type { Options, Position, Type };

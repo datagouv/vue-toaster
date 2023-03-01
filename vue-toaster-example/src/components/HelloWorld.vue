@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
-    <Spacing bottom="4">
-      <h1>{{ msg }}</h1>
+    <Spacing :bottom="0.25">
+      <h1>{{ title }}</h1>
       <p>Click a button to show a Toast</p>
     </Spacing>
     <div class="c-grid">
@@ -11,9 +11,9 @@
       <Button class="v--warning" @click="toast('warning')">Warning</Button>
       <Button class="v--error" @click="toast('error')">Error</Button>
     </div>
-    <Spacing :vertical="4">
+    <Spacing :vertical="0.25">
       <h2>Do your changes</h2>
-      <Spacing :vertical="2">
+      <Spacing :vertical="0.125">
         <div class="c-two-columns">
           <div>
             <fieldset>
@@ -32,7 +32,7 @@
                   type="radio"
                   :value="position.value"
                   v-model="options.position"
-                  @change="toast"
+                  @change="() => toast()"
                 />{{ position.name }}
               </label>
             </fieldset>
@@ -58,7 +58,7 @@
                 <input
                   type="checkbox"
                   checked
-                  @change="options.dismissible = $event.target.checked"
+                  @change="options.dismissible = (<HTMLInputElement>$event.target).checked"
                 />
                 Dismissible on click
               </label>
@@ -67,7 +67,7 @@
               <label class="c-label">
                 <input
                   type="checkbox"
-                  @change="options.queue = $event.target.checked"
+                  @change="options.queue = (<HTMLInputElement>$event.target).checked"
                 />
                 Enqueue
               </label>
@@ -85,7 +85,7 @@
                 <input
                   type="checkbox"
                   checked
-                  @change="options.pauseOnHover = $event.target.checked"
+                  @change="options.pauseOnHover = (<HTMLInputElement>$event.target).checked"
                 />
                 Pause on hover
               </label>
@@ -95,7 +95,7 @@
                 <input
                   type="checkbox"
                   checked
-                  @change="options.useDefaultCss = $event.target.checked"
+                  @change="options.useDefaultCss = (<HTMLInputElement>$event.target).checked"
                 />
                 Use default CSS
               </label>
@@ -104,13 +104,13 @@
           <div class="c-column-right">
             <div class="c-code">
               <code>this.$toast(</code>
-              <Spacing left="2">
+              <Spacing :left="0.125">
                 <code class="c-code--string">"{{ message }}"</code>
                 <code v-if="hasOptions">,</code>
               </Spacing>
-              <Spacing v-if="hasOptions" left="2">
+              <Spacing v-if="hasOptions" :left="0.125">
                 <code>{</code>
-                <Spacing left="4">
+                <Spacing :left="0.25">
                   <span class="c-code--object-line" v-if="options.type">
                     <code>type:</code>
                     <code class="c-code--string">{{ options.type }}</code>
@@ -175,6 +175,7 @@
               <code>)</code>
             </div>
             <Button @click="toast" class="v--default">Show it</Button>
+            <Button @click="clear" class="v--error">Clear toasts</Button>
           </div>
         </div>
       </Spacing>
@@ -182,75 +183,74 @@
   </div>
 </template>
 
-<script>
-import Button from './Button'
-import Spacing from './Spacing.vue'
-import { Positions } from '@meforma/vue-toaster'
+<script setup lang="ts">
+import Button from './Button.vue';
+import Spacing from './Spacing.vue';
+import { createToaster, Positions } from '../../../src/index';
+import type { Options, Type } from '../../../src/index';
+import { computed, reactive, ref } from 'vue';
 
-export default {
-  name: 'HelloWorld',
-  data() {
+const props = defineProps<{
+  title?: string,
+}>();
+
+const message = ref(`Hi! I'm a Toast`);
+
+const options = reactive<Options>({
+  duration: 4000,
+});
+
+const toaster = createToaster();
+
+const positions = computed(() => {
+  return Object.keys(Positions).map((key) => {
     return {
-      message: `Hi! I'm a Toast`,
-      options: {
-        duration: 4000
-      }
+      key,
+      value: Positions[key],
+      name: Positions[key].replace(/-/, ' ')
     }
-  },
-  components: {
-    Button,
-    Spacing
-  },
-  props: {
-    msg: String
-  },
-  computed: {
-    positions() {
-      return Object.keys(Positions).map((key) => {
-        return {
-          key,
-          value: Positions[key],
-          name: Positions[key].replace(/-/, ' ')
-        }
-      })
-    },
-    hasOptions() {
-      return (
-        this.options &&
-        (Object.keys(this.options).length > 1 || this.options.duration !== 4000)
-      )
-    }
-  },
-  methods: {
-    toast(type = 'default', dismissible = true) {
-      const options = {
-        dismissible,
-        onClick: this.onClick
-      }
-      typeof type === 'string' && (options.type = type)
+  })
+});
 
-      typeof this.options.maxToasts === 'string' &&
-        (this.options.maxToasts = parseInt(this.options.maxToasts))
+const hasOptions = computed(() => {
+  return (Object.keys(options).length > 1 || options.duration !== 4000)
+});
 
-      this.$toast.show(this.message, {
-        ...options,
-        ...this.options
-      })
-    },
-    changeDuration(e) {
-      this.options.duration = !e.target.checked ? 4000 : false
-    },
-    onClick(e) {
-      console.log(e)
-    }
-  }
+function clear() {
+  toaster.clear();
+}
+
+function toast(type: Type = 'default', dismissible = true) {
+  const localOptions: Options = {
+    dismissible,
+    onClick,
+  };
+
+  typeof type === 'string' && (localOptions.type = type);
+
+  typeof options.maxToasts === 'string' &&
+    (options.maxToasts = parseInt(options.maxToasts));
+
+  toaster.show(message.value, {
+    ...localOptions,
+    ...options
+  });
+}
+
+function changeDuration(e: Event) {
+  const target = (<HTMLInputElement>e.target)
+  options.duration = !target.checked ? 4000 : false
+}
+
+function onClick(e: string) {
+  console.log(e);
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
-  margin: 40px 0 0;
+  margin: 2.5rem 0 0;
 }
 ul {
   list-style-type: none;
@@ -258,7 +258,7 @@ ul {
 }
 li {
   display: inline-block;
-  margin: 0 10px;
+  margin: 0 0.2rem ;
 }
 a {
   color: #42b983;
@@ -266,18 +266,18 @@ a {
 .c-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-gap: 8px;
-  max-width: 800px;
+  grid-gap: 0.5rem;
+  max-width: 50rem;
   width: 100%;
   margin: 0 auto;
 }
 
 input {
   border: 1px solid transparent;
-  height: 40px;
-  padding: 10px 16px;
+  height: 2.5rem;
+  padding: 0.5rem 1rem;
   outline: none;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   background-color: #f3f3f4;
   width: 100%;
 }
@@ -287,17 +287,17 @@ input[type='range'] {
 }
 input[type='radio'],
 input[type='checkbox'] {
-  height: 22px;
-  width: 22px;
-  margin-right: 8px;
+  height: 1.5rem;
+  width: 1.5rem;
+  margin-right: 0.5rem;
   cursor: pointer;
 }
 
 .c-two-columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 24px;
-  max-width: 840px;
+  grid-gap: 1.5rem;
+  max-width: 53rem;
   margin: 0 auto;
 }
 
@@ -308,12 +308,12 @@ fieldset {
 }
 
 fieldset:not(:last-child) {
-  margin-bottom: 20px;
+  margin-bottom: 1.2rem;
 }
 
 .c-label {
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
   text-transform: capitalize;
@@ -321,11 +321,13 @@ fieldset:not(:last-child) {
 
 .c-code {
   background-color: #252526;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   color: #fff;
-  font-size: 18px;
-  padding: 16px;
+  font-size: 1.2rem;
+  padding: 1rem;
   text-align: left;
+  width: 350px;
+  overflow: auto;
 }
 
 .c-code--string {
@@ -341,7 +343,7 @@ fieldset:not(:last-child) {
   display: inline-block;
 }
 .c-code--object-line > code:last-child {
-  margin-left: 8px;
+  margin-left: 0.5rem;
 }
 
 .c-code--number {
@@ -349,7 +351,9 @@ fieldset:not(:last-child) {
 }
 
 .c-column-right {
-  display: grid;
-  grid-gap: 16px;
+  display: flex;
+  flex-direction: column;
+  grid-gap: 1rem;
+  margin-left: 2rem;
 }
 </style>
