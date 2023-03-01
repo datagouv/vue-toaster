@@ -26,4 +26,4 @@ tasks:
     set -x
     npm version --allow-same-version $(npm view @conciergerie-dev/vue-toaster@latest version)
     npm version --no-git-tag-version prerelease
-    npm publish
+    npm run publish-version

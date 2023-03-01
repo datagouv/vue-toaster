@@ -9,7 +9,7 @@
     "coverage": "vitest run --coverage",
     "preversion": "npm run build && vitest run",
     "update-version": "npm version --no-git-tag-version",
-    "publish": "npm publish --access public"
+    "publish-version": "npm publish --access public"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
