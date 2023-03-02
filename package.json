@@ -1,6 +1,6 @@
 {
   "name": "@conciergerie.dev/vue-toaster",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "description": "Vue.js toaster notification",
   "type": "module",
   "files": [
@@ -9,12 +9,12 @@
     "types"
   ],
   "types": "./types/index.d.ts",
-  "main": "./dist/my-lib.umd.cjs",
-  "module": "./dist/my-lib.js",
+  "main": "./dist/vue-toaster.umd.cjs",
+  "module": "./dist/vue-toaster.js",
   "exports": {
     ".": {
-      "import": "./dist/my-lib.js",
-      "require": "./dist/my-lib.umd.cjs"
+      "import": "./dist/vue-toaster.js",
+      "require": "./dist/vue-toaster.umd.cjs"
     }
   },
   "scripts": {
