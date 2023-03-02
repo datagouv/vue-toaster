@@ -53,6 +53,7 @@ composer.phar
 # Project related
 *.tgz
 /dist/
+/types/
 /demo/
 /docs/
 /tmp/

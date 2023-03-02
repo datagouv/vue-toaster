@@ -4,8 +4,11 @@
   "description": "Vue.js toaster notification",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "src",
+    "types"
   ],
+  "types": "./types/index.d.ts",
   "main": "./dist/my-lib.umd.cjs",
   "module": "./dist/my-lib.js",
   "exports": {
@@ -17,7 +20,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vue-tsc --noEmit && vite build && vue-tsc --declaration --emitDeclarationOnly",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "preversion": "npm run build && vitest run",
