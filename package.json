@@ -2,10 +2,16 @@
   "name": "@conciergerie.dev/vue-toaster",
   "version": "2.3.0",
   "description": "Vue.js toaster notification",
-  "main": "src/index.ts",
-  "files": [
-    "src"
-  ],
+  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/my-lib.umd.cjs",
+  "module": "./dist/my-lib.js",
+  "exports": {
+    ".": {
+      "import": "./dist/my-lib.js",
+      "require": "./dist/my-lib.umd.cjs"
+    }
+  },
   "scripts": {
     "start": "npm run dev",
     "dev": "vite",

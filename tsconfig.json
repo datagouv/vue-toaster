@@ -2,8 +2,8 @@
     "extends": "@vue/tsconfig/tsconfig.web.json",
     "include": ["src"],
     "compilerOptions": {
-      "target": "es2018",
-      "lib": ["dom", "esnext"],
+      "target": "ESNext",
+      "lib": ["dom", "ESNext"],
       "declaration": true,
       "declarationMap": true,
       "declarationDir": "types",
