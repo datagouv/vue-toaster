@@ -1,5 +1,5 @@
 import Toaster from './Toaster.vue';
-import createToaster from './api.js';
+import createToaster from './api';
 import Positions from './defaults/positions';
 import type { App } from 'vue';
 import type { Position } from './defaults/positions';
