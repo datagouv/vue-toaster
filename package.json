@@ -3,8 +3,13 @@
   "version": "2.3.0",
   "description": "Vue.js toaster notification",
   "main": "src/index.ts",
+  "files": [
+    "src"
+  ],
   "scripts": {
-    "build": "vite build",
+    "start": "npm run dev",
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "preversion": "npm run build && vitest run",

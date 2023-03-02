@@ -8,9 +8,6 @@ export default defineConfig({
     vue(),
   ],
   build: {
-    rollupOptions: {
-      input: 'src/index.ts',
-    },
   },
   test: {
     environment: "jsdom",
