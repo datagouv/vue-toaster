@@ -2,16 +2,14 @@
 
 Vue.js toast notification plugin for vue 3
 
-[DEMO](https://meforma.github.io/vue-toaster/)
-
 ## Installation
 
 ```bash
 # yarn
-yarn add @meforma/vue-toaster
+yarn add @conciergerie.dev/vue-toaster
 
 # npm
-npm install @meforma/vue-toaster
+npm install --save-dev @conciergerie.dev/vue-toaster
 ```
 
 ## Import
@@ -20,7 +18,7 @@ You can install Toaster so it's usable globally:
 
 ```js
 // In you main.js
-import Toaster from "@meforma/vue-toaster";
+import Toaster from "@conciergerie.dev/vue-toaster";
 
 createApp(App).use(Toaster).mount("#app");
 ```
@@ -28,7 +26,7 @@ createApp(App).use(Toaster).mount("#app");
 You can also import Toaster locally:
 
 ```js
-import { createToaster } from "@meforma/vue-toaster";
+import { createToaster } from "@conciergerie.dev/vue-toaster";
 
 const toaster = createToaster({ /* options */ });
 
