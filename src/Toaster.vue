@@ -1,14 +1,16 @@
 <template>
   <transition :enter-active-class="transition.enter" :leave-active-class="transition.leave" ref="el">
-    <div 
+    <component 
+      :is="tag"
       v-show="isActive"
       :class="['c-toast', `c-toast--${type}`, `c-toast--${position}`]"
       @mouseover="toggleTimer(true)"
       @mouseleave="toggleTimer(false)"
       @click="click"
       role="alert"
-      v-html="message"
-    ></div>
+    >
+      {{message}}
+    </component>
   </transition>
 </template>
 
@@ -186,6 +188,8 @@ const transition = computed<{enter: string, leave: string}>(() => {
     }
   );
 });
+
+const tag = computed(() => props.dismissible ? 'button' : 'div');
 
 onBeforeUnmount(() => {
   emitter.off('toast-clear', close);
