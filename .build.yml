@@ -25,5 +25,5 @@ tasks:
     echo scope=conciergerie-dev >> .npmrc
     set -x
     npm version --allow-same-version $(npm view @conciergerie.dev/vue-toaster@latest version)
-    npm version --no-git-tag-version prerelease
+    npm run update-version -- prerelease
     npm run publish-version
