@@ -1,6 +1,6 @@
 {
   "name": "@conciergerie.dev/vue-toaster",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "Vue.js toaster notification",
   "type": "module",
   "files": [
@@ -10,12 +10,6 @@
   ],
   "types": "./dist/vue-toaster.d.ts",
   "module": "./dist/vue-toaster.js",
-  "exports": {
-    ".": {
-      "import": "./dist/vue-toaster.js",
-      "require": null
-    }
-  },
   "scripts": {
     "start": "npm run dev",
     "dev": "vite",
