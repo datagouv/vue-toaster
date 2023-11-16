@@ -8,19 +8,18 @@
     "src",
     "types"
   ],
-  "types": "./types/index.d.ts",
-  "main": "./dist/vue-toaster.umd.cjs",
+  "types": "./dist/vue-toaster.d.ts",
   "module": "./dist/vue-toaster.js",
   "exports": {
     ".": {
       "import": "./dist/vue-toaster.js",
-      "require": "./dist/vue-toaster.umd.cjs"
+      "require": null
     }
   },
   "scripts": {
     "start": "npm run dev",
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build && vue-tsc --declaration --emitDeclarationOnly",
+    "build": "vite build",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "preversion": "npm run build && vitest run",
@@ -31,8 +30,8 @@
     "@vitejs/plugin-vue": "^4.5.0",
     "@vitest/coverage-v8": "^0.34.6",
     "jsdom": "^22.1.0",
-    "typescript": "^5.2.2",
     "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.6.3",
     "vitest": "^0.34.4",
     "vue": "^3.3.8",
     "vue-tsc": "^1.8.22"
