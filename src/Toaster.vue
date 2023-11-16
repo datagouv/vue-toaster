@@ -26,7 +26,7 @@ export interface Props {
   message: string,
   type?: string,
   position?: Position,
-  maxToasts?: number | boolean,
+  maxToasts?: number | false,
   duration?: number | false,
   dismissible? : boolean,
   queue?: boolean,
