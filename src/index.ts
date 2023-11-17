@@ -9,7 +9,7 @@ import './themes/default/index.css';
 import './themes/default/colors.css';
 import './themes/default/toast.css';
 
-export const plugin: Plugin = {
+export const plugin: Plugin<Options> = {
   install: (app: App, options: Options = {}) => {
     let methods = createToaster(options);
     app.config.globalProperties.$toast = methods;
