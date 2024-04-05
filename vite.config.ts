@@ -37,6 +37,9 @@ export default defineConfig({
     clearMocks: true,
     typecheck: {
       checker: "vue-tsc"
-    }
+    },
+    testTimeout: 30_000,
+    reporters: ["junit"],
+    outputFile: "junit.xml"
   }
 });

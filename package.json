@@ -14,7 +14,8 @@
     "start": "npm run dev",
     "dev": "vite",
     "build": "vite build",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "preversion": "npm run build && vitest run",
     "update-version": "npm version --no-git-tag-version",
@@ -45,11 +46,10 @@
     "vue3",
     "toastify"
   ],
-  "author": "@nicolaskempf57",
+  "author": "DINUM",
   "license": "MIT",
   "bugs": {
-    "url": "https://todo.sr.ht/~nicolaskempf57/vue-toaster",
-    "email": "~nicolaskempf57/vue-toaster-devel@lists.sr.ht"
+    "url": "https://github.com/datagouv/vue-toaster/issues"
   },
-  "homepage": "https://sr.ht/~nicolaskempf57/vue-toaster/"
+  "homepage": "https://github.com/datagouv/vue-toaster"
 }
